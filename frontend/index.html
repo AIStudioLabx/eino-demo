@@ -2,163 +2,105 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>天气查询 Agent Demo</title>
+  <title>智能体导航 - Agent Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
+    * { box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background: #f5f7fb;
+      background: linear-gradient(160deg, #f0f4ff 0%, #e8eeff 50%, #f5f7fb 100%);
       margin: 0;
       padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
       min-height: 100vh;
-    }
-    .container {
-      margin-top: 60px;
-      background: #ffffff;
-      padding: 24px 28px;
-      border-radius: 16px;
-      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
-      max-width: 480px;
-      width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 20px 80px;
     }
     h1 {
-      margin-top: 0;
-      font-size: 22px;
+      font-size: 26px;
+      color: #111827;
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 40px;
+    }
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: center;
+      max-width: 640px;
+    }
+    .card {
+      display: block;
+      width: 280px;
+      padding: 28px 24px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.1);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      border: 1px solid rgba(99, 102, 241, 0.12);
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 56px rgba(15, 23, 42, 0.14);
+      border-color: rgba(99, 102, 241, 0.25);
+    }
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    .card.weather .card-icon { background: linear-gradient(135deg, #93c5fd, #60a5fa); }
+    .card.comfyui .card-icon { background: linear-gradient(135deg, #a78bfa, #8b5cf6); }
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 600;
       color: #111827;
     }
-    p.desc {
-      margin-top: 4px;
+    .card p {
+      margin: 0;
       font-size: 13px;
       color: #6b7280;
+      line-height: 1.5;
     }
-    label {
-      display: block;
-      font-size: 14px;
-      color: #374151;
-      margin-top: 16px;
-      margin-bottom: 6px;
-    }
-    input, textarea {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid #d1d5db;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-      resize: vertical;
-    }
-    input:focus, textarea:focus {
-      border-color: #6366f1;
-      box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.35);
-    }
-    button {
-      margin-top: 16px;
-      width: 100%;
-      padding: 10px 0;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
-      transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.1s ease;
-    }
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 30px rgba(79, 70, 229, 0.4);
-    }
-    button:active {
-      transform: translateY(0);
-      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
-      opacity: 0.95;
-    }
-    .status {
-      margin-top: 10px;
-      font-size: 12px;
-      color: #9ca3af;
-      min-height: 16px;
-    }
-    .output {
-      margin-top: 18px;
-      padding: 12px 14px;
-      border-radius: 10px;
-      background: #f9fafb;
-      font-size: 14px;
-      color: #111827;
-      border: 1px dashed #e5e7eb;
-      white-space: pre-wrap;
-    }
-    .output.empty {
-      color: #9ca3af;
+    .card-arrow {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #6366f1;
+      font-weight: 500;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>天气查询 Agent</h1>
-    <p class="desc">输入自然语言，比如 “帮我查一下北京今天的天气”，Agent 会自行调用 MCP Tool 获取天气。</p>
+  <h1>智能体导航</h1>
+  <p class="subtitle">选择要使用的智能体入口</p>
 
-    <label for="input">问题 / 指令</label>
-    <textarea id="input" rows="3" placeholder="例如：帮我查一下上海今天的天气，需要温度和天气情况。"></textarea>
-
-    <button id="btn">发送给 Agent</button>
-    <div class="status" id="status"></div>
-
-    <div id="output" class="output empty">结果会显示在这里</div>
-  </div>
-
-  <script>
-    const inputEl = document.getElementById('input');
-    const btnEl = document.getElementById('btn');
-    const statusEl = document.getElementById('status');
-    const outputEl = document.getElementById('output');
-
-    btnEl.addEventListener('click', async () => {
-      const text = inputEl.value.trim();
-      if (!text) {
-        statusEl.textContent = '请输入想要查询的问题。';
-        return;
-      }
-
-      statusEl.textContent = '调用 Agent 中...';
-      outputEl.textContent = '等待返回...';
-      outputEl.classList.remove('empty');
-
-      try {
-        const resp = await fetch('http://localhost:8082/agent', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ input: text })
-        });
-
-        if (!resp.ok) {
-          const txt = await resp.text();
-          statusEl.textContent = 'Agent 调用失败：' + resp.status;
-          outputEl.textContent = txt || '后端错误';
-          return;
-        }
-
-        const data = await resp.json();
-        if (data.error) {
-          statusEl.textContent = 'Agent 返回错误';
-          outputEl.textContent = data.error;
-        } else {
-          statusEl.textContent = '完成';
-          outputEl.textContent = data.output || 'Agent 没有返回内容';
-        }
-      } catch (e) {
-        statusEl.textContent = '网络或服务错误';
-        outputEl.textContent = String(e);
-      }
-    });
-  </script>
+  <nav class="nav">
+    <a href="/weather.html" class="card weather">
+      <div class="card-icon">🌤</div>
+      <h2>天气查询</h2>
+      <p>通过自然语言查询城市天气，由 Agent 调用 MCP 天气工具返回结果。</p>
+      <span class="card-arrow">进入天气查询 →</span>
+    </a>
+    <a href="/comfyui.html" class="card comfyui">
+      <div class="card-icon">📜</div>
+      <h2>小说转剧本</h2>
+      <p>将小说正文提交至 RunningHub 工作流，由 Agent 自动创建任务、轮询完成并返回剧本结果。</p>
+      <span class="card-arrow">进入小说转剧本 →</span>
+    </a>
+  </nav>
 </body>
 </html>
-

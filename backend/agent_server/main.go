@@ -152,7 +152,16 @@ func main() {
 			return
 		}
 
+		// 系统提示：要求模型在用户请求天气或小说转剧本时必须调用对应工具，避免只返回纯文本导致 Tools 节点报错
+		systemPrompt := `你是一个具备工具调用能力的助手。请根据用户意图调用对应工具，不要仅用文字回复。
+
+- 当用户询问某地天气、城市天气时，你必须调用 weather 工具，参数 city 填城市名（如 Beijing、上海）。
+- 当用户要求将小说转成剧本、或提供小说正文要转换时，你必须调用 novel_to_script 工具，参数 text 填小说正文或用户提供的文本，可选参数 seed 可填数字字符串。
+- 以上场景下必须先调用工具，再根据工具返回结果组织回复；不要不调用工具而直接文字回答。
+- 特别地，当 novel_to_script 工具返回后，你的最终回复只输出工具返回的剧本文本内容本身，不要加任何总结、开场白、结束语或链接说明（例如不要写 "Great! Here is the script:" 或 "You can download..." 等），只输出剧本正文。`
+
 		msgs := []*schema.Message{
+			schema.SystemMessage(systemPrompt),
 			{
 				Role:    schema.User,
 				Content: req.Input,
