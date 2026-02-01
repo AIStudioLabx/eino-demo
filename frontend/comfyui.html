@@ -141,7 +141,7 @@
       outputEl.classList.remove('empty');
 
       try {
-        const resp = await fetch('http://localhost:8082/agent', {
+        const resp = await fetch('http://localhost:8082/tool_agent', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ input: text })
